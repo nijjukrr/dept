@@ -12,14 +12,20 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(s => s.trim()) : [];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
+app.use(cors((req, callback) => {
+  const origin = req.header('Origin');
+  const forwardedProtocol = req.header('x-forwarded-proto');
+  const protocol = forwardedProtocol ? forwardedProtocol.split(',')[0].trim() : req.protocol;
+  const sameOrigin = `${protocol}://${req.get('host')}`;
+  const allowOrigin = !origin
+    || process.env.NODE_ENV !== 'production'
+    || origin === sameOrigin
+    || allowedOrigins.includes(origin);
+
+  callback(null, {
+    origin: allowOrigin,
+    credentials: true
+  });
 }));
 app.use(express.json());
 
