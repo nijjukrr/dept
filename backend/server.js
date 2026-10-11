@@ -30,15 +30,17 @@ app.use(cors((req, callback) => {
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/achievements', require('./routes/achievements'));
-app.use('/api/leaderboard', require('./routes/leaderboard'));
-app.use('/api/teams', require('./routes/teams'));
-app.use('/api/updates', require('./routes/updates'));
-app.use('/api/admin', require('./routes/admin'));
-app.use('/api/uploads', require('./routes/uploads').router);
-app.use('/api/platforms', require('./routes/platforms'));
+const asRouter = (loadedModule) => loadedModule.router || loadedModule.default || loadedModule;
+
+app.use('/api/auth', asRouter(require('./routes/auth')));
+app.use('/api/users', asRouter(require('./routes/users')));
+app.use('/api/achievements', asRouter(require('./routes/achievements')));
+app.use('/api/leaderboard', asRouter(require('./routes/leaderboard')));
+app.use('/api/teams', asRouter(require('./routes/teams')));
+app.use('/api/updates', asRouter(require('./routes/updates')));
+app.use('/api/admin', asRouter(require('./routes/admin')));
+app.use('/api/uploads', asRouter(require('./routes/uploads')));
+app.use('/api/platforms', asRouter(require('./routes/platforms')));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'SIET CSE Portal API is running 🚀', timestamp: new Date().toISOString() });
