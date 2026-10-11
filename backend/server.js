@@ -49,11 +49,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log('\n╔════════════════════════════════════════╗');
-  console.log('║   SIET CSE Department Portal API     ║');
-  console.log('║   Sri Shakthi Institute, Coimbatore   ║');
-  console.log(`║   Running on http://localhost:${PORT}    ║`);
-  console.log('╚════════════════════════════════════════╝\n');
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log('\n╔════════════════════════════════════════╗');
+    console.log('║   SIET CSE Department Portal API     ║');
+    console.log('║   Sri Shakthi Institute, Coimbatore   ║');
+    console.log(`║   Running on http://localhost:${PORT}    ║`);
+    console.log('╚════════════════════════════════════════╝\n');
+  });
+}
+
+module.exports = app;
 
